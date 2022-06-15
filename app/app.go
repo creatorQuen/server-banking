@@ -1,6 +1,8 @@
 package app
 
 import (
+	"ashishi-banking/domain"
+	"ashishi-banking/service"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
@@ -11,11 +13,12 @@ func Start() {
 	//mux := http.NewServeMux()
 	router := mux.NewRouter()
 
-	router.HandleFunc("/greet", greet).Methods(http.MethodGet)
-	router.HandleFunc("/customers", getAllCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/customers", createCustomer).Methods(http.MethodPost)
+	ch := CustomerHandler{service.NewCustomerService(domain.NewCustommerRepositoryStub())}
+	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
+	//router.HandleFunc("/greet", greet).Methods(http.MethodGet)
+	//router.HandleFunc("/customers", createCustomer).Methods(http.MethodPost)
+	//router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
 	log.Fatal(http.ListenAndServe("localhost:8000", router))
 }
