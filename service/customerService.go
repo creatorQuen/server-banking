@@ -1,6 +1,8 @@
 package service
 
-import "ashishi-banking/domain"
+import (
+	"ashishi-banking/domain"
+)
 
 type CustomerService interface {
 	GetAllCustomer() ([]domain.Customer, error)

@@ -2,6 +2,7 @@ package app
 
 import (
 	"ashishi-banking/service"
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
@@ -22,6 +23,7 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 	//	{"Anohin", "New Delhi", "110075"},
 	//	{"Rob", "New Delhi", "110075"},
 	//}
+	//ctx.New
 
 	customers, _ := ch.service.GetAllCustomer()
 
@@ -37,3 +39,10 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 //func greet(w http.ResponseWriter, r *http.Request) {
 //	fmt.Fprint(w, "Hello World!!")
 //}
+
+func (ch *CustomerHandler) simpleHandler(c context.Context, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// FIXME Do something with our context
+		//next.ServeHTTP(w, r)
+	})
+}
