@@ -2,9 +2,10 @@ package app
 
 import (
 	"ashishi-banking/service"
-	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -23,7 +24,6 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 	//	{"Anohin", "New Delhi", "110075"},
 	//	{"Rob", "New Delhi", "110075"},
 	//}
-	//ctx.New
 
 	customers, _ := ch.service.GetAllCustomer()
 
@@ -40,9 +40,24 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 //	fmt.Fprint(w, "Hello World!!")
 //}
 
-func (ch *CustomerHandler) simpleHandler(c context.Context, next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// FIXME Do something with our context
-		//next.ServeHTTP(w, r)
-	})
+//func (ch *CustomerHandler) simpleHandler(c context.Context, next http.Handler) http.Handler {
+//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//		// FIXME Do something with our context
+//		//next.ServeHTTP(w, r)
+//	})
+//}
+
+func (ch *CustomerHandler) getCustomer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["customer_id"]
+
+	customer, err := ch.service.GetCustomer(id)
+	if err != nil {
+		w.WriteHeader(err.Code)
+		fmt.Fprint(w, err.Message)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(customer)
 }

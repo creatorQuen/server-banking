@@ -10,13 +10,15 @@ import (
 )
 
 func Start() {
-	//mux := http.NewServeMux()
 	router := mux.NewRouter()
 
 	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustommerRepositoryStub())}
-	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryDb())}
+
+	dbConnector := domain.NewCustomerRepositoryDb()
+	ch := CustomerHandler{service.NewCustomerService(dbConnector)}
 
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
 
 	//router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	//router.HandleFunc("/customers", createCustomer).Methods(http.MethodPost)
