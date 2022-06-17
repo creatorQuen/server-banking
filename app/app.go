@@ -7,11 +7,12 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 )
 
 func Start() {
 	router := mux.NewRouter()
-
+	//go http.ListenAndServe("localhost:3000", nil)
 	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustommerRepositoryStub())}
 
 	dbConnector := domain.NewCustomerRepositoryDb()
