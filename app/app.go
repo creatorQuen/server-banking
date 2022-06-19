@@ -5,10 +5,12 @@ import (
 	"ashishi-banking/service"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"time"
 )
 
 func sanityCheck() {
@@ -25,8 +27,10 @@ func Start() {
 	//go http.ListenAndServe("localhost:3000", nil)
 	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustommerRepositoryStub())}
 
-	dbConnector := domain.NewCustomerRepositoryDb()
-	ch := CustomerHandler{service.NewCustomerService(dbConnector)}
+	dbClient := getDbClient()
+	customerRepositoryDb := domain.NewCustomerRepositoryDb(dbClient)
+	//accountRepositoryDb := domain.NewAccountRepositoryDb(dbCLient)
+	ch := CustomerHandler{service.NewCustomerService(customerRepositoryDb)}
 
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
@@ -38,6 +42,27 @@ func Start() {
 	address := os.Getenv("SERVER_ADDRESS")
 	port := os.Getenv("SERVER_PORT")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
+}
+
+func getDbClient() *sqlx.DB {
+	dbUser := os.Getenv("DB_USER")
+	dbPasswd := os.Getenv("DB_PASSWD")
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
+
+	client, err := sqlx.Open("mysql", dataSource)
+	if err != nil {
+		panic(err)
+	}
+
+	client.Ping()
+	client.SetConnMaxLifetime(time.Minute * 3)
+	client.SetMaxOpenConns(10)
+	client.SetMaxIdleConns(10)
+
+	return client
 }
 
 func createCustomer(w http.ResponseWriter, r *http.Request) {
