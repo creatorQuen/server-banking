@@ -16,7 +16,7 @@ func NewAccountRepositoryDb(dbClinet *sqlx.DB) AccountRepositoryDb {
 }
 
 func (d AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
-	sqlInsert := "INSERT INTO accounts (customer_id, opening_id, account_type, amount, status) value (?, ?, ?, ?, ?)"
+	sqlInsert := "INSERT INTO accounts (customer_id, opening_date, account_type, amount, status) value (?, ?, ?, ?, ?)"
 	result, err := d.client.Exec(sqlInsert, a.CustomerId, a.OpeningDate, a.AccountType, a.Amount, a.Status)
 	if err != nil {
 		logger.Error("Error where creating new account: " + err.Error())
