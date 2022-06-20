@@ -1,9 +1,6 @@
 package dto
 
-import (
-	"ashishi-banking/domain"
-	"ashishi-banking/errs"
-)
+import "ashishi-banking/errs"
 
 const WITHDRAWAL = "withdrawal"
 const DEPOSIT = "deposit"
@@ -16,22 +13,21 @@ type TransactionRequest struct {
 	CustomerId      string  `json:"-"`
 }
 
-func (t TransactionRequest) IsTransactionTypeWithdrawal() bool {
-	if t.TransactionType == domain.WITHDRAWAL {
-		return true
-	}
-	return false
+func (r TransactionRequest) IsTransactionTypeWithdrawal() bool {
+	return r.TransactionType == WITHDRAWAL
 }
 
-func (t TransactionRequest) Validate() *errs.AppError {
-	if t.TransactionType != WITHDRAWAL && t.TransactionType != DEPOSIT {
-		return errs.NewValidationError("Transactoin type can only be deposit or withdrawal")
-	}
+func (r TransactionRequest) IsTransactionTypeDeposit() bool {
+	return r.TransactionType == DEPOSIT
+}
 
-	if t.Amount < 0 {
+func (r TransactionRequest) Validate() *errs.AppError {
+	if !r.IsTransactionTypeWithdrawal() && !r.IsTransactionTypeDeposit() {
+		return errs.NewValidationError("Transaction type can only be deposit or withdrawal")
+	}
+	if r.Amount < 0 {
 		return errs.NewValidationError("Amount cannot be less than zero")
 	}
-
 	return nil
 }
 
