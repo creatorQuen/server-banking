@@ -20,4 +20,13 @@ func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
 
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
+	FindBy(accountId string) (*Account, *errs.AppError)
+	SaveTransaction(transaction Transaction) (*Transaction, *errs.AppError)
+}
+
+func (a Account) CanWithdrawal(amount float64) bool {
+	if a.Amount < amount {
+		return false
+	}
+	return true
 }

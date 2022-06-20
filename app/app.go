@@ -2,6 +2,7 @@ package app
 
 import (
 	"ashishi-banking/domain"
+	"ashishi-banking/logger"
 	"ashishi-banking/service"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -37,13 +38,18 @@ func Start() {
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).Methods(http.MethodPost)
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.MakeTransaction).
+		Methods(http.MethodPost)
 
 	//router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	//router.HandleFunc("/customers", createCustomer).Methods(http.MethodPost)
 	//router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
+	// starting server
 	address := os.Getenv("SERVER_ADDRESS")
 	port := os.Getenv("SERVER_PORT")
+	logger.Info(fmt.Sprintf("Starting server on %s:%s", address, port))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
 }
 
@@ -68,11 +74,11 @@ func getDbClient() *sqlx.DB {
 	return client
 }
 
-func createCustomer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Post request received")
-}
-
-func getCustomer(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fmt.Fprint(w, vars["customer_id"])
-}
+//func createCustomer(w http.ResponseWriter, r *http.Request) {
+//	fmt.Fprint(w, "Post request received")
+//}
+//
+//func getCustomer(w http.ResponseWriter, r *http.Request) {
+//	vars := mux.Vars(r)
+//	fmt.Fprint(w, vars["customer_id"])
+//}
