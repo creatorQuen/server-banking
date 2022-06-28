@@ -6,11 +6,6 @@ import (
 	"ashishi-banking/errs"
 )
 
-type CustomerService interface {
-	GetAllCustomer(string) ([]dto.CustomerResponse, *errs.AppError)
-	GetCustomer(string) (*dto.CustomerResponse, *errs.AppError)
-}
-
 type DefaultCustomerService struct {
 	repo domain.CustomerRepository
 }

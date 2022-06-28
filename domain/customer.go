@@ -2,7 +2,6 @@ package domain
 
 import (
 	"ashishi-banking/dto"
-	"ashishi-banking/errs"
 )
 
 type Customer struct {
@@ -36,9 +35,4 @@ func (c Customer) ToDto() dto.CustomerResponse {
 		DateofBirth: c.DateofBirth,
 		Status:      c.statusAsText(),
 	}
-}
-
-type CustomerRepository interface {
-	FindAll(string) ([]Customer, *errs.AppError)
-	ById(string) (*Customer, *errs.AppError)
 }
